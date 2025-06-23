@@ -41,7 +41,7 @@ public class JwtSecurityWebConfig {
                 "http://4.232.137.90:3000"
         ));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
+        corsConfiguration.setAllowedHeaders(List.of("*")); // Allow all headers
         corsConfiguration.setExposedHeaders(List.of("Authorization"));
         corsConfiguration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -76,6 +76,7 @@ public class JwtSecurityWebConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/user/register").permitAll() // allow registration
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagementConfigurer ->
