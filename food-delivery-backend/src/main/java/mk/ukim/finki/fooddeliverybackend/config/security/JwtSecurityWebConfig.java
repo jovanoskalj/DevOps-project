@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.http.HttpMethod;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -41,9 +42,16 @@ public class JwtSecurityWebConfig {
                 "http://4.232.137.90:3000"
         ));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        corsConfiguration.setAllowedHeaders(List.of("*"));
-        corsConfiguration.setExposedHeaders(List.of("*"));
+        corsConfiguration.setAllowedHeaders(List.of(
+                "Authorization", "Cache-Control", "Content-Type", "X-Requested-With",
+                "Origin", "Accept", "Access-Control-Request-Method", "Access-Control-Request-Headers"
+        ));
+        corsConfiguration.setExposedHeaders(List.of(
+                "Authorization", "Location"
+        ));
         corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.setMaxAge(3600L);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
@@ -68,9 +76,7 @@ public class JwtSecurityWebConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(corsCustomizer ->
-                        corsCustomizer.configurationSource(corsConfigurationSource())
-                )
+                .cors(corsCustomizer -> corsCustomizer.configurationSource(corsConfigurationSource()))
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
