@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.http.HttpMethod;
 
 import java.util.List;
 
@@ -72,45 +73,9 @@ public class JwtSecurityWebConfig {
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
-                .authorizeHttpRequests(authorizeHttpRequestsCustomizer ->
-                        authorizeHttpRequestsCustomizer
-                                .requestMatchers(
-                                        "/swagger-ui/**",
-                                        "/v3/api-docs/**",
-                                        "/h2/**",
-                                        "/api/user/register",
-                                        "/api/user/login"
-                                )
-                                .permitAll()
-                                .requestMatchers(
-                                        "/api/user/me"
-                                )
-                                .authenticated()
-                                .requestMatchers(
-                                        "/api/restaurants",
-                                        "/api/restaurants/{id}",
-                                        "/api/dishes",
-                                        "/api/dishes/{id}",
-                                        "/api/dishes/{id}/details",
-                                        "/api/dishes/{id}/add-to-order",
-                                        "/api/dishes/{id}/remove-from-order",
-                                        "/api/orders/pending",
-                                        "/api/orders/pending/confirm",
-                                        "/api/orders/pending/cancel"
-                                ).hasAnyRole("CUSTOMER", "OWNER", "ADMIN")
-                                .requestMatchers(
-                                        "/api/dishes/add",
-                                        "/api/dishes/{id}/edit",
-                                        "/api/dishes/{id}/delete",
-                                        "/api/restaurants/add",
-                                        "/api/restaurants/{id}/edit",
-                                        "/api/restaurants/{id}/delete"
-                                ).hasAnyRole("OWNER", "ADMIN")
-                                .requestMatchers(
-                                        "/api/users/{username}"
-                                ).hasRole("ADMIN")
-                                .anyRequest()
-                                .hasRole("ADMIN")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagementConfigurer ->
                         sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
