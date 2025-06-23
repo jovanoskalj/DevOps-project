@@ -20,7 +20,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.http.HttpMethod;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -43,17 +42,27 @@ public class JwtSecurityWebConfig {
         ));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of(
-                "Authorization", "Cache-Control", "Content-Type", "X-Requested-With",
-                "Origin", "Accept", "Access-Control-Request-Method", "Access-Control-Request-Headers"
+                "Authorization",
+                "Cache-Control",
+                "Content-Type",
+                "X-Requested-With",
+                "Origin",
+                "Accept",
+                "Access-Control-Request-Method",
+                "Access-Control-Request-Headers"
         ));
         corsConfiguration.setExposedHeaders(List.of(
-                "Authorization", "Location"
+                "Authorization",
+                "Location"
         ));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
+        // Apply the CORS configuration only to your API routes
+        source.registerCorsConfiguration("/api/**", corsConfiguration);
+        // Also allow preflight requests and actuator health checks
+        source.registerCorsConfiguration("/actuator/health", corsConfiguration);
         return source;
     }
 
@@ -84,6 +93,9 @@ public class JwtSecurityWebConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/user/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/user/login").permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
+                        // Permit GET actuator for debugging if needed
+                        .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagementConfigurer ->
