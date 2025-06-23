@@ -7,6 +7,7 @@ const axiosInstance = axios.create({
     },
 });
 
+// Attach token if it exists
 axiosInstance.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("token");
@@ -15,13 +16,22 @@ axiosInstance.interceptors.request.use(
         }
         return config;
     },
+    (error) => Promise.reject(error)
+);
+
+// Handle auth errors and redirect
+axiosInstance.interceptors.response.use(
+    (response) => response,
     (error) => {
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (
+            error.response &&
+            (error.response.status === 401 || error.response.status === 403)
+        ) {
             localStorage.removeItem("token");
             window.location.href = "/login";
         }
         return Promise.reject(error);
-    },
+    }
 );
 
 export default axiosInstance;
