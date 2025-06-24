@@ -29,5 +29,19 @@ export default [
         { allowConstantExport: true },
       ],
     },
+    env: {
+      browser: true,
+      es2021: true,
+      node: true, // Allow Node.js globals like 'process'
+    },
+  },
+  {
+    files: ['vite.config.js'],
+    env: {
+      node: true, // Explicitly enable Node.js environment for Vite config
+    },
+    globals: {
+      process: 'readonly', // Explicitly define 'process' as a global
+    },
   },
 ]

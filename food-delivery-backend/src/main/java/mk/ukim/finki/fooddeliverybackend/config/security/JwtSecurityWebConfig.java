@@ -59,10 +59,8 @@ public class JwtSecurityWebConfig {
         corsConfiguration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Apply the CORS configuration only to your API routes
-        source.registerCorsConfiguration("/api/**", corsConfiguration);
-        // Also allow preflight requests and actuator health checks
-        source.registerCorsConfiguration("/actuator/health", corsConfiguration);
+        // Apply to all endpoints
+        source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
     }
 
@@ -85,7 +83,7 @@ public class JwtSecurityWebConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // <-- важно!
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Ensure CORS configuration is applied
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
