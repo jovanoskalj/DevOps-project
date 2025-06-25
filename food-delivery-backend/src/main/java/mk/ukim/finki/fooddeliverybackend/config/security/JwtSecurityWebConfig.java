@@ -38,7 +38,10 @@ public class JwtSecurityWebConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(List.of(
                 "http://localhost:3000",
-                "http://4.232.137.90:3000"
+                "http://localhost:8080",
+                "http://4.232.137.90:3000",
+                "http://4.232.137.90:8080"
+
         ));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of(
